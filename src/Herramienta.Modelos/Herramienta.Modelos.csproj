@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3C1AE1EB-32C8-417F-9740-4AAEC17E6419}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Herramienta.Modelos</RootNamespace>
+    <AssemblyName>Herramienta.Modelos</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>..\..\lib\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\..\lib\ServiceStack.Text.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Interfaces\ITengoFechaRadicacionDesdeHasta.cs" />
+    <Compile Include="Interfaces\ITransformoFechas.cs" />
+    <Compile Include="Peticiones\RangoConsultar.cs" />
+    <Compile Include="Metadata\Rango.cs" />
+    <Compile Include="Metadata\RegionalObjetivo.cs" />
+    <Compile Include="Interfaces\ResponseCreate.cs" />
+    <Compile Include="Interfaces\PeticionConsultarPorFecha.cs" />
+    <Compile Include="Interfaces\PeticionCrearPorFecha.cs" />
+    <Compile Include="Interfaces\IServiceResponse.cs" />
+    <Compile Include="Interfaces\ServiceResponse.cs" />
+    <Compile Include="Interfaces\ResponseDelete.cs" />
+    <Compile Include="Interfaces\PeticionBorrarPorFecha.cs" />
+    <Compile Include="Peticiones\RangoCrear.cs" />
+    <Compile Include="Peticiones\RangoBorrar.cs" />
+    <Compile Include="Entidades\Declaracion.cs" />
+    <Compile Include="Entidades\DeclaracionBienes.cs" />
+    <Compile Include="Entidades\DeclaracionCausasDesplazamiento.cs" />
+    <Compile Include="Entidades\DeclaracionDaniosFamilia.cs" />
+    <Compile Include="Entidades\DeclaracionEstados.cs" />
+    <Compile Include="Entidades\DeclaracionFuentesIngreso.cs" />
+    <Compile Include="Entidades\DeclaracionObtencionAgua.cs" />
+    <Compile Include="Entidades\DeclaracionPersonasAyuda.cs" />
+    <Compile Include="Entidades\Personas.cs" />
+    <Compile Include="Entidades\PersonasContactos.cs" />
+    <Compile Include="Entidades\PersonasEducacion.cs" />
+    <Compile Include="Entidades\PersonasRegimenSalud.cs" />
+    <Compile Include="Entidades\Programacion.cs" />
+    <Compile Include="Entidades\SubTablas.cs" />
+    <Compile Include="Interfaces\IConIdDeclaracion.cs" />
+    <Compile Include="Interfaces\IDeclaracionConIdSubTabla.cs" />
+    <Compile Include="Interfaces\IRepositorioHerramienta.cs" />
+    <Compile Include="Interfaces\IRepositorioPrincipal.cs" />
+    <Compile Include="Interfaces\IEntidad.cs" />
+    <Compile Include="Interfaces\INecesidadBasica.cs" />
+    <Compile Include="Interfaces\IIndicadorNecesidadBasica.cs" />
+    <Compile Include="Objetivos\NecesidadBasica.cs" />
+    <Compile Include="Objetivos\EstadoAtencion.cs" />
+    <Compile Include="Metadata\TablasRango.cs" />
+    <Compile Include="Interfaces\IConstructorRepositorioPrincipal.cs" />
+    <Compile Include="Interfaces\IRangoGestor.cs" />
+    <Compile Include="Interfaces\IRepositorioPrincipalConsultas.cs" />
+    <Compile Include="Interfaces\Selector.cs" />
+    <Compile Include="Interfaces\ISelector.cs" />
+    <Compile Include="Interfaces\IHerramientaEnCache.cs" />
+    <Compile Include="Entidades\DeclaracionPsicosocial.cs" />
+    <Compile Include="Interfaces\IConIdPersona.cs" />
+    <Compile Include="Interfaces\IConFechaRadicacion.cs" />
+    <Compile Include="Objetivos\RecibeRacion.cs" />
+    <Compile Include="Interfaces\IIndicadorNecesidadBasicaGestor.cs" />
+    <Compile Include="Interfaces\FiltroListadosBase.cs" />
+    <Compile Include="Interfaces\IFiltroListados.cs" />
+    <Compile Include="Extensiones\Extensiones.cs" />
+    <Compile Include="Extensiones\BoolUtil.cs" />
+    <Compile Include="Extensiones\TUtil.cs" />
+    <Compile Include="Extensiones\PropertyUtil.cs" />
+    <Compile Include="Constantes.cs" />
+    <Compile Include="Extensiones\StringUtil.cs" />
+    <Compile Include="Extensiones\DateTimeUtil.cs" />
+    <Compile Include="Interfaces\INecesidadBasicaGestor.cs" />
+    <Compile Include="Interfaces\IRangoGestorConsultas.cs" />
+    <Compile Include="Peticiones\EstadoAtencionConsultar.cs" />
+    <Compile Include="Peticiones\EstadoAtencionCrear.cs" />
+    <Compile Include="Peticiones\EstadoAtencionBorrar.cs" />
+    <Compile Include="Interfaces\IGeneradorNecesidadBasica.cs" />
+    <Compile Include="Interfaces\GeneradorNecesidadBasicaBase.cs" />
+    <Compile Include="Interfaces\ContenedorMetodos.cs" />
+    <Compile Include="Interfaces\ContenedorFiltros.cs" />
+    <Compile Include="Interfaces\IContenedorMetodos.cs" />
+    <Compile Include="Interfaces\IContenedorFiltros.cs" />
+    <Compile Include="Peticiones\RecibeRacionConsultar.cs" />
+    <Compile Include="Peticiones\RecibeRacionCrear.cs" />
+    <Compile Include="Peticiones\RecibeRacionBorrar.cs" />
+    <Compile Include="Interfaces\IRecibeRacionGestor.cs" />
+    <Compile Include="Interfaces\IEstadoAtencionGestor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Objetivos\" />
+    <Folder Include="Peticiones\" />
+    <Folder Include="Metadata\" />
+    <Folder Include="Entidades\" />
+    <Folder Include="Extensiones\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

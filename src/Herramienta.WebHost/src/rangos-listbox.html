@@ -1,0 +1,42 @@
+<dom-module id="rangos-listbox">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+      }
+
+    </style>
+
+        <paper-dropdown-menu label="Periodo y Municipio de Atención">
+          <paper-listbox on-iron-select="_handleRangoSeleccionado" class="dropdown-content" id="plRangos">
+            <template is="dom-repeat" items="[[rangos]]">
+              <paper-item>[[item.Texto]] [[item.Municipio]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'rangos-listbox',
+      properties: {
+        rangoSeleccionado:{
+          type :Object,
+          value: null,
+          notify: true
+        }
+      },
+
+      _handleRangoSeleccionado:function(){
+        console.log("sel", arguments);
+        console.log("sel", this.$.plRangos.selected, this.rangos[ this.$.plRangos.selected]);
+        this.rangoSeleccionado=this.rangos[this.$.plRangos.selected];
+        this.fire('rango-seleccionado', this.rangoSeleccionado );
+      }
+
+    });
+
+  </script>
+
+</dom-module>

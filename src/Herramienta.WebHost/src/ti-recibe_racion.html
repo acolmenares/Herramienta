@@ -1,0 +1,430 @@
+<!-- aqui!
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<script src="../bower_components/lodash/lodash.min.js"></script>
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="ti-recibe_racion">
+<template>
+<style>
+	:host {
+		padding: : 0px;
+		font-size: 8pt;
+		font-family: 'Tahoma', 'Roboto', 'Noto', sans-serif;
+		margin: 0;
+	}
+
+	.hd-color {
+		background-color: #2196F3;
+	}
+
+	.totales-bg {
+		background-color: #2196F3;
+		font-weight: bolder;
+	}
+
+	.container {
+		padding: 10px 0px 10px 0px;
+		@apply(--layout-vertical);
+	}
+
+	.row {
+		@apply(--layout-horizontal);
+	}
+
+	.subtotal {
+		font-weight: bolder;
+		background-color: #4CAF50;
+	}
+
+	.pila {
+		@apply(--layout-vertical);
+	}
+
+	.flexchild {
+		padding: 2px;
+		min-width: 64px;
+		border: black;
+		border-style: outset;
+		border-width: thin;
+		border-radius: 4px;
+	}
+
+	div.flexchild {
+		display: flex;
+		justify-content: center;
+		display: flex;
+		align-items: center;
+	}
+
+	div.narrow {
+		min-width: 50px;
+	}
+
+	div.narrowest {
+		min-width: 30px;
+	}
+
+	.flexchild-total {
+		min-width: 312px;
+	}
+
+	.header {
+		font-weight: bold;
+	}
+
+	.header-vertical {
+		font-weight: bold;
+		transform: rotate(180deg);
+		max-height: 174px;
+		writing-mode: bt-rl;
+		writing-mode: vertical-rl;
+	}
+
+	.fh {
+		max-height: 200px;
+	}
+
+	.totales-mw {
+		min-width: 190px;
+	}
+
+  rangos-listbox{
+    padding: 0px 10px;
+  }
+}
+
+</style>
+
+<ti-recibe_racion-consulta on-request-completed="_handleObjetivoConsultado" id="ajax"></ti-recibe_racion-consulta>
+<rangos-listbox rangos="[[rangos]]"  on-rango-seleccionado="_procesarRangoSeleccionado"></rangos-listbox>
+<div class="row" style="padding:0px 4px;">
+	<div class="container">
+		<div class="row">
+			<div class="pila">
+				<div class="row hd-color">
+					<!-- encabezado !-->
+					<div class="flexchild header narrow">Periodo</div>
+					<div class="flexchild header">Municipio</div>
+					<div class="flexchild header">Mes</div>
+					<div class="flexchild header-vertical fh narrowest">Radicados durante el Mes</div>
+					<div class="">
+						<div class="flexchild header">Declarantes del mes Excluidos</div>
+						<div class="row">
+							<div class="flexchild header-vertical narrowest">Mas de 2 Declaraciones Por el mismo Hecho</div>
+							<div class="flexchild header-vertical narrowest">Superó el limite de un mes para ser contactado</div>
+							<div class="flexchild header-vertical narrowest">No asistió a 2 programaciones en primera entrega</div>
+							<div class="flexchild header-vertical narrowest">Incluido en otro núcleo familiar por el mismo hecho</div>
+							<div class="flexchild header-vertical narrowest">Extemporaneos</div>
+							<div class="flexchild header-vertical narrowest">Fuera de la Ciudad</div>
+							<div class="flexchild header-vertical narrowest">No Desplazado</div>
+							<div class="flexchild header-vertical narrowest">Masivo</div>
+							<div class="flexchild header-vertical narrowest">Reciben ayuda de otra fuente</div>
+							<div class="flexchild header-vertical narrowest">Intraurbano</div>
+							<div class="flexchild header-vertical narrowest">Cultivos Ilicitos</div>
+							<div class="flexchild header-vertical narrowest">Total</div>
+						</div>
+					</div>
+					<div class="flexchild header-vertical fh narrowest">Elegibles</div>
+					<div class="">
+						<div class="flexchild header">Atendidos en Primera Entrega</div>
+						<div class="row">
+							<div class="flexchild header-vertical narrowest">Declarantes del Mes</div>
+							<div class="flexchild header-vertical narrowest">Radicados en Meses Anteriores (mismo periodo)</div>
+							<div class="flexchild header-vertical narrow">Radicados en Periodos Anteriores</div>
+							<div class="flexchild header-vertical narrow">Total Atendidos en Primera Entrega</div>
+						</div>
+					</div>
+					<div class="flexchild header-vertical fh narrowest">Atendidos en Segunda Entrega</div>
+					<div class="">
+						<div class="flexchild header">Pendientes por Atender</div>
+						<div class="row">
+							<div class="flexchild header-vertical narrowest">Pendientes por Aplicar Filtros de Elegibilidad</div>
+							<div class="flexchild header-vertical">Pendiente por programar(Elegible SI, Contactado SI, Sin Programacion)</div>
+							<div class="flexchild header-vertical">NO Ubicados / Sin Contacto (Elegibles SI, Contacatdo NO)</div>
+							<div class="flexchild header-vertical">Programados Próximo Mes (Elegible SI, Contactado SI, Programado SI-Fecha Posterior)</div>
+							<div class="flexchild header-vertical narrowest">Programados que NO Asistieron</div>
+							<div class="flexchild header-vertical narrowest">Total Pendientes Por Atender</div>
+						</div>
+					</div>
+					<div class="flexchild header-vertical fh narrowest">Comprobación de Resultados</div>
+					<div class="flexchild header-vertical fh narrow">% de Atendidos</div>
+				</div>
+				<!--  fin encabezado !-->
+				<!-- !-->
+				<template is="dom-repeat" items="{{datos}}" as="record">
+					<div class="row">
+						<div class="flexchild narrow">{{record.Periodo}}</div>
+						<div class="flexchild">[[municipio]]</div>
+						<div clas="pila">
+							<template is="dom-repeat" items="{{record.Meses}}" as="mes">
+								<div class="row">
+									<div class="flexchild">{{mes.Mes}}</div>
+									<!-- <template is="dom-repeat" items="{{mes.Data}}" as="dato" index-as="idx"> !-->
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Radicados')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'DobleDeclaracion')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'SuperoLimite')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'NoAsisistioDosProgramaciones')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'IncluyoPersonaDeOtroNucleo')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Extemporaneidad')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'FueraDeLaCiudad')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'NoEsDeplazado')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Masivo')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidoPorOtraFuente')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Intraurbano')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'CultivosIlicitos')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Excluidos')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Elegibles')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidosPrimeraEntregaEnElMesDeRadicacion')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidosPrimeraEntregaRadicadosEnMesesAnteriores')]]</div>
+										<div class="flexchild narrow">[[_datoMes( mes.Indicador, 'AtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores')]]</div>
+										<div class="flexchild narrow">[[_datoMes( mes.Indicador, 'TotalAtendidosEnPrimeraEntregaEnElMes')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidosEnSegundaEntrega')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'PendientePorAplicarFiltros')]]</div>
+										<div class="flexchild">[[_datoMes( mes.Indicador, 'PendientePorProgramar')]]</div>
+										<div class="flexchild">[[_datoMes( mes.Indicador, 'PendienteNoContactado')]]</div>
+										<div class="flexchild">[[_datoMes( mes.Indicador, 'PendienteProgramadoProximoMes')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'PendienteProgramadoQueNoAsistio')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'TotalPendientesPorAtender')]]</div>
+										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'SumaComprobacion')]]</div>
+										<div class="flexchild narrow">[[_datoMesPorcentaje(mes.Indicador, 'PorcentajeAtendidos')]]</div>
+									<!--</template> !-->
+								</div>
+							</template>
+							<div class="row subtotal">
+								<div class="flexchild">Subtotal {{record.Periodo}}</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Radicados')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'DobleDeclaracion')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'SuperoLimite')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'NoAsisistioDosProgramaciones')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'IncluyoPersonaDeOtroNucleo')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Extemporaneidad')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'FueraDeLaCiudad')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'NoEsDeplazado')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Masivo')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidoPorOtraFuente')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Intraurbano')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'CultivosIlicitos')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Excluidos')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Elegibles')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidosPrimeraEntregaEnElMesDeRadicacion')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidosPrimeraEntregaRadicadosEnMesesAnteriores')]]</div>
+								<div class="flexchild narrow">[[_datoPeriodo(record, 'AtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores')]]</div>
+								<div class="flexchild narrow">[[_datoPeriodo(record, 'TotalAtendidosEnPrimeraEntregaEnElMes')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidosEnSegundaEntrega')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'PendientePorAplicarFiltros')]]</div>
+								<div class="flexchild">[[_datoPeriodo(record, 'PendientePorProgramar')]]</div>
+								<div class="flexchild">[[_datoPeriodo(record, 'PendienteNoContactado')]]</div>
+								<div class="flexchild">[[_datoPeriodo(record, 'PendienteProgramadoProximoMes')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'PendienteProgramadoQueNoAsistio')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'TotalPendientesPorAtender')]]</div>
+								<div class="flexchild narrowest">[[_datoPeriodo(record, 'SumaComprobacion')]]</div>
+								<div class="flexchild narrow">[[_datoPeriodoPorcentaje(record)]]</div>
+							</div>
+						</div>
+					</div>
+				</template>
+
+				<div class="row totales-bg">
+					<div class="flexchild totales-mw"> Totales </div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'Radicados')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'DobleDeclaracion')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'SuperoLimite')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'NoAsisistioDosProgramaciones')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'IncluyoPersonaDeOtroNucleo')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'Extemporaneidad')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'FueraDeLaCiudad')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'NoEsDeplazado')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'Masivo')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidoPorOtraFuente')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'Intraurbano')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'CultivosIlicitos')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'Excluidos')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'Elegibles')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidosPrimeraEntregaEnElMesDeRadicacion')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidosPrimeraEntregaRadicadosEnMesesAnteriores')]]</div>
+					<div class="flexchild narrow">[[_datoTotal(datos,'AtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores')]]</div>
+					<div class="flexchild narrow">[[_datoTotal(datos,'TotalAtendidosEnPrimeraEntregaEnElMes')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidosEnSegundaEntrega')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'PendientePorAplicarFiltros')]]</div>
+					<div class="flexchild">[[_datoTotal(datos,'PendientePorProgramar')]]</div>
+					<div class="flexchild">[[_datoTotal(datos,'PendienteNoContactado')]]</div>
+					<div class="flexchild">[[_datoTotal(datos,'PendienteProgramadoProximoMes')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'PendienteProgramadoQueNoAsistio')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'TotalPendientesPorAtender')]]</div>
+					<div class="flexchild narrowest">[[_datoTotal(datos,'SumaComprobacion')]]</div>
+					<div class="flexchild narrow">[[_datoTotalPorcentaje(datos)]]</div>
+				</div>
+				<!-- !-->
+			</div>
+		</div>
+	</div>
+</div>
+</template>
+<script>
+    Polymer({
+
+      is: 'ti-recibe_racion',
+
+			properties: {
+
+				/*
+				datos :[{Periodo:"Q1", Meses:[{AnioMes:"201510", Mes:"Octubre", Indicador:[data,data] },
+                {Periodo:"Q2", Meses:[{AnioMes:"201601", Indicador:[data,data] },
+				*/
+        datos:
+        {
+          type:Array, value:[]
+        },
+
+        rangoSeleccionado:{
+          type :Object,
+          value: null,
+          notify: true,
+          observer:'_consultarRecibeRacion'
+        },
+				municipio:{
+					type:String,
+					value:""
+				}
+
+      },
+
+      ready:function () {
+        console.log("ti-recibe_racion ready", this.rangoSeleccionado);
+      },
+
+			_datoMes: function(indicador,  path) {
+				var datoMes=0;
+				for (var mes in indicador){
+         datoMes+= indicador[mes][path];
+				 }
+				 return datoMes;
+			},
+
+			_datoMesPorcentaje:function(indicador,path)
+			{
+				return (this._datoMes(indicador,path)*100.00).toFixed(2);
+			},
+
+      _datosItem: function(change, index, path) {
+       // this.get(path, root) returns a value for a path
+       // relative to a root object.
+       return this.get(path, change.base[index]);
+     },
+
+     _datosItemPorcentaje: function(change, index, path) {
+      // this.get(path, root) returns a value for a path
+      // relative to a root object.
+      //console.log("change", change);
+      return (this.get(path, change.base[index])*100).toFixed(2);
+     },
+
+     _datoPeriodo: function(periodo, path) {
+      var datoPeriodo=0;
+      for (var mes in periodo.Meses){
+        for( var dato in  periodo.Meses[mes].Indicador ){
+          datoPeriodo+= periodo.Meses[mes].Indicador[dato][path];
+        }
+      }
+      return datoPeriodo;
+     },
+
+     _datoPeriodoPorcentaje: function(periodo) {
+       var porcentaje=0.00;
+       var elegibles = this._datoPeriodo(periodo, 'Elegibles')*1.00;
+       if (elegibles>0){
+         var atendidos = this._datoPeriodo(periodo, 'TotalAtendidosEnPrimeraEntregaRadicadosEnElMes')*1.00;
+         porcentaje= atendidos/elegibles;
+       }
+       return (porcentaje*100.00).toFixed(2);
+     },
+
+     _datoTotal: function(datos, path) {
+			 var datoTotal=0;
+       for ( var p in datos){
+         datoTotal+= this._datoPeriodo(datos[p], path);
+       }
+       return datoTotal;
+     },
+
+     _datoTotalPorcentaje: function(datos) {
+       var porcentaje=0.00;
+       var elegibles = this._datoTotal(datos,'Elegibles')*1.00;
+       if (elegibles>0){
+         var atendidos = this._datoTotal(datos, 'TotalAtendidosEnPrimeraEntregaRadicadosEnElMes')*1.00;
+         porcentaje= atendidos/elegibles;
+       }
+       return (porcentaje*100).toFixed(2);
+     },
+
+     _consultarRecibeRacion:function(rango){
+       console.log("ti-recibe_racion _consultarRango", rango);
+       if( ! Object.isEmptyOrNull(rango)){
+         var params={
+           Municipio:rango.Municipio,
+           FechaRadicacionDesde:rango.FechaRadicacionDesde,
+           FechaRadicacionHasta: rango.FechaRadicacionHasta
+         };
+         this.$.ajax.params= params;
+         this.$.ajax.execute();
+       }
+     },
+
+     _handleObjetivoConsultado:function(data){
+		  	console.log("ti-recibe_racion ObjetivoConsultado Response",data.detail.Response.Results);
+			  var municipioSeleccionado =this.rangoSeleccionado.Municipio;
+		    var results = !Object.isEmptyOrNull(municipioSeleccionado)
+		 	  ? window._.filter( data.detail.Response.Results, function(v){ return v.Municipio==municipioSeleccionado; })
+		 	  : data.detail.Response.Results;
+
+				this.municipio=municipioSeleccionado;
+
+			  for(var r in results){
+		 	 	  if( Object.isEmptyOrNull(results[r].AnioMes))
+				  {
+				 	  results[r].AnioMes = this._aniomes(results[r].Mes);
+				  }
+			  }
+
+			  var p = _.groupBy(results, function(value) { return value.Periodo;});
+			  var m=[];
+			  for(var p1 in p) {
+			 	  var meses=[];
+				  var aniomes=  _.groupBy(p[p1], function(value){ return value.AnioMes;});
+				  for(var m1 in aniomes){
+					  meses.push( {AnioMes:m1, Mes:aniomes[m1][0].Mes,  Indicador:aniomes[m1]});
+				  }
+				  m.push( {Periodo:p1,    Meses: meses } );
+			  }
+			  this.datos=m;
+     },
+
+		 _aniomes:function(mes){
+			var res="";
+			if(mes=="Enero") res="201601"
+			else if(mes=="Febrero") res = "201602"
+			else if(mes=="Marzo") res = "201603"
+			else if(mes=="Abril") res = "201604"
+			else if(mes=="Mayo") res = "201605"
+			else if(mes=="Junio") res = "201606"
+			else if(mes=="Julio") res = "201607"
+			else if(mes=="Agosto") res = "201608"
+			else if(mes=="Septiembre") res = "201609"
+			else if(mes=="Octubre") res = "201510"
+			else if(mes=="Noviembre") res = "201511"
+			else if(mes=="Diciembre") res = "201512"
+		  return res;
+    },
+    _procesarRangoSeleccionado:function(data){
+      this.rangoSeleccionado= data.detail;
+    }
+    });
+</script>
+</dom-module>

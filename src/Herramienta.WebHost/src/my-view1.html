@@ -1,0 +1,61 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view1">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        padding: 10px;
+      }
+
+      .drawer-list {
+        margin: 0 10px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 10px;
+        text-decoration: none;
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+
+    </style>
+
+    <iron-selector class="drawer-list" role="navigation">
+    <a name="view2" href="/view2">
+    <div class="card">
+      <div class="circle">2.1</div>
+      <h1>% de Desplazados nuevos que reciben raciones de comida de 2100 Kcal/día por > 30 días</h1>
+    </div>
+    </a>
+    <a name="view3" href="/view3">
+    <div class="card">
+      <div class="circle">2.1</div>
+      <h1>% de Desplazados nuevos que reciben raciones de comida de 2100 Kcal/día por > 30 días</h1>
+    </div>
+    </a>
+    </iron-selector>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-view1'
+    });
+  </script>
+</dom-module>

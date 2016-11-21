@@ -1,0 +1,52 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<dom-module id="rangos-consulta">
+  <template>
+    <iron-ajax id="ajax"
+      headers='{"Content-Type":"application/x-www-form-urlencoded"}'
+      method="{{method}}"
+      debounce-duration="{{debounceDuration}}"
+      body="{{body}}"
+      url="{{url}}"
+      handle-as="json"
+      on-response="_handleResponse"
+      on-error="_handleResponse"
+      last-response="{{lastResponse}}" auto></iron-ajax>
+  </template>
+  <script>
+    //'use strict';
+    Polymer({
+      is: 'rangos-consulta',
+      hostAttributes: {
+        hidden: true
+      },
+      behaviors: [],
+      properties: {
+        method:{type: String, value:'GET' },
+        debounceDuration: {type:Number, value:300},
+        api: { type:String, value: 'hr-api/rango'  } ,  //  ''
+        lastResponse: { type:Object, value:function(){ return {}; }, notify: true },
+        action: {type: String, value:'consultar.json' },  //
+        body: { type:Object, value: null },
+        url:{
+          computed: '_computeUrl(api,action)'
+        }
+      },
+      ready:function () {
+        console.log("listo rangos-consulta");
+      },
+
+      execute:function(){
+        this.$.ajax.generateRequest();
+
+      },
+      _computeUrl:function(api, action){
+        return  [api, action].join('/');
+      },
+      _handleResponse:function(){
+        console.log("rangos-consulta _handleResponse");
+        var rs = aicl.xhrToResponse(this.$.ajax.lastRequest);
+        this.fire('request-completed', rs);
+      }
+    });
+  </script>
+</dom-module>

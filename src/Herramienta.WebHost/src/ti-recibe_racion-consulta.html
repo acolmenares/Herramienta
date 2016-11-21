@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<dom-module id="ti-recibe_racion-consulta">
+  <template>
+    <iron-ajax id="ajax"
+      headers='{"Content-Type":"application/x-www-form-urlencoded"}'
+      method="{{method}}"
+      debounce-duration="{{debounceDuration}}"
+      body="{{body}}"
+      url="{{url}}"
+      handle-as="json"
+      on-response="_handleResponse"
+      on-error="_handleResponse"
+      last-response="{{lastResponse}}"
+      params="{{params}}"></iron-ajax>
+  </template>
+  <script>
+    //'use strict';
+    Polymer({
+      is: 'ti-recibe_racion-consulta',
+      hostAttributes: {
+        hidden: true
+      },
+      behaviors: [],
+      properties: {
+        method:{type: String, value:'GET' },
+        debounceDuration: {type:Number, value:300},
+        api: { type:String, value: 'hr-api/reciberacion'  } ,  //  ''
+        lastResponse: { type:Object, value:function(){ return {}; }, notify: true },
+        action: {type: String, value:'consultar.json' },  //QueryObjetivoDosUno
+        body: { type:Object, value: null },
+        url:{
+          computed: '_computeUrl(api,action)'
+        },
+        params: { type:Object, value:function(){ return {}; }, notify: false },
+      },
+      ready:function () {
+        console.log("listo ti-recibe_racion-consulta");
+      },
+      execute:function(){
+        this.$.ajax.generateRequest();
+      },
+      _computeUrl:function(api, action){
+        return  [api, action].join('/');
+      },
+      _handleResponse:function(){
+        var rs = aicl.xhrToResponse(this.$.ajax.lastRequest);
+        this.fire('request-completed', rs);
+      }
+    });
+  </script>
+</dom-module>

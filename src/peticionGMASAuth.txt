@@ -1,0 +1,10 @@
+https://accounts.google.com/o/oauth2/auth?client_id=841485895139-j4so04mdtig06vg2eqbm8u3mamm6d28a.apps.googleusercontent.com&scope=profile%20email&apppackagename=com.issuu.android.app&immediate=false&include_granted_scopes=true&proxy=oauth2relay751733089&redirect_uri=postmessage&origin=https%3A%2F%2Fissuu.com&response_type=token&gsiwebsdk=1&state=376361898%7C0.1095377469&authuser=0&jsh=m%3B%2F_%2Fscs%2Fapps-static%2F_%2Fjs%2Fk%3Doz.gapi.es.qkvr6zpVk4o.O%2Fm%3D__features__%2Fam%3DAQ%2Frt%3Dj%2Fd%3D1%2Frs%3DAGLTcCPdhk-vy0X-ZQRy5CxOtGpDwblhCQ
+
+
+https://issuu.com/signup?authorized=google&accessToken={%22state%22:%22%22,%22access_token%22:%22ya29.Ci-KA4yDQetL0UpqV07mkiHrLFVCHU-ZM5AtHyAQnHl5PVrQJW2eWC-npmsO_cWUTA%22,%22token_type%22:%22Bearer%22,%22expires_in%22:%223600%22,%22scope%22:%22https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%22,%22client_id%22:%22841485895139-j4so04mdtig06vg2eqbm8u3mamm6d28a.apps.googleusercontent.com%22,%22response_type%22:%22token%22,%22issued_at%22:%221477954720%22,%22expires_at%22:%221477958320%22,%22g-oauth-window%22:{%22parent%22:null,%22opener%22:null,%22top%22:null,%22length%22:0,%22frames%22:null,%22closed%22:true,%22location%22:{},%22self%22:null,%22window%22:null},%22status%22:{%22google_logged_in%22:false,%22signed_in%22:true,%22method%22:%22PROMPT%22}}
+
+
+authorized:google
+accessToken:{"state":"","access_token":"ya29.Ci-KA4yDQetL0UpqV07mkiHrLFVCHU-ZM5AtHyAQnHl5PVrQJW2eWC-npmsO_cWUTA","token_type":"Bearer","expires_in":"3600","scope":"https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email","client_id":"841485895139-j4so04mdtig06vg2eqbm8u3mamm6d28a.apps.googleusercontent.com","response_type":"token","issued_at":"1477954720","expires_at":"1477958320","g-oauth-window":{"parent":null,"opener":null,"top":null,"length":0,"frames":null,"closed":true,"location":{},"self":null,"window":null},"status":{"google_logged_in":false,"signed_in":true,"method":"PROMPT"}}
+
+https://ericbidelman.tumblr.com/post/31486670538/creating-webm-video-from-getusermedia
