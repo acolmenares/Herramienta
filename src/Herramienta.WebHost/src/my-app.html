@@ -14,10 +14,12 @@
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
 
 <link rel="import" href="my-icons.html">
 <link rel="import" href="rangos-consulta.html">
 <link rel="import" href="ti-recibe_racion-consulta.html">
+<link rel="import" href="ti-estado_atencion-consulta.html">
 <link rel="import" href="rangos-listbox.html">
 <dom-module id="my-app">
   <template>
@@ -75,7 +77,10 @@
             fallback-selection="view404"
             role="main">
           <ti-menu name="menu"></ti-menu>
-          <ti-recibe_racion name="recibe_racion" rangos="[[rangos]]"></ti-recibe_racion>
+          <ti-recibe_racion name="recibe_racion" rangos="[[rangos]]" on-mostrar-detalle="_procesarMostrarDetalle">
+          </ti-recibe_racion>
+          <ti-estado_atencion name="estado_atencion" peticion="[[_peticionEstadoAtencion]]" >
+          </ti-estado_atencion>
           <my-view404 name="view404"></my-view404>
         </iron-pages>
 
@@ -134,13 +139,22 @@
               AnioMes:temp1[r].AnioMes,
               FechaRadicacionDesde:temp1[r].FechaRadicacionDesde,
               FechaRadicacionHasta:temp1[r].FechaRadicacionHasta,
-              Municipio: temp1[r].Municipios[m],
-              Texto: temp1[r].Texto
+              Texto: temp1[r].Texto,
+              Periodo: temp1[r].Periodo,
+              Municipio: temp1[r].Municipios[m]
             })
           }
         }
         console.log("rangos : ", this.rangos);
       },
+
+      _procesarMostrarDetalle:function(data){
+        console.log("_procesarMostrarDetalle", data);
+        window.location.href="#/estado_atencion";
+        this._peticionEstadoAtencion= data.detail;
+        //this.page="estado_atencion";
+      }
+      
     });
   </script>
 </dom-module>

@@ -1,0 +1,160 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/vaadin-grid/vaadin-grid.html">
+<dom-module id="ti-estado_atencion">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+      }
+
+    </style>
+    <ti-estado_atencion-consulta on-request-completed="_handleEstadoAtencionConsultado" id="ajax"></ti-estado_atencion-consulta>
+    <paper-material elevation="1">
+      <!-- <vaadin-combo-box label="Filter by first name" items="[[_names]]" value="{{_filterValue}}"></vaadin-combo-box> !-->
+      <vaadin-grid id="grid">
+        <table>
+          <colgroup>
+            <col name="Index">
+            <col name="FechaRadicacion">
+            <col name="FechaDesplazamiento">
+            <col name="FechaDeclaracion">
+            <col name="FechaAtencion">
+            <col name="Horario">
+            <col name="Grupo">
+            <col name="Fuente">
+            <col name="Regional">
+            <col name="MunicipioAtencion">
+            <col name="TipoDeclarante">
+            <col name="EnLinea">
+            <col name="PrimerApellido">
+            <col name="SegundoApellido">
+            <col name="PrimerNombre">
+            <col name="SegundoNombre">
+            <col name="TI">
+            <col name="Identificacion">
+            <col name="Celular">
+            <col name="Telefono">
+            <col name="Direccion">
+            <col name="Barrio">
+            <col name="TFE">
+            <col name="TFR">
+            <col name="Elegibilidad">
+            <col name="FechaElegibilidad">
+            <col name="Contactado">
+            <col name="FechaContactado">
+            <col name="Programado">
+            <col name="FechaProgramado">
+            <col name="ReProgramado">
+            <col name="FechaReProgramado">
+            <col name="Atendido">
+            <col name="MotivoNoAtencion">
+            <col name="TipoReprogramacion">
+            <col name="FechaSegundaEntrega">
+            <col name="AsistioSegundaEntrega">
+          </colgroup>
+          <tfoot>
+            <tr>
+              <th>
+                <span>Total:[[_datosCompletos.length]]</span>
+              </th>
+              <th>
+                <span hidden="[[_datosCompletos.length==_datosFiltrados.length]]">Filtrados:[[_datosFiltrados.length]]</span>
+              </th>
+            </tr>
+          </tfoot>
+        </table>
+      </vaadin-grid>
+    </paper-material>
+    
+  </template>
+  <script>
+    
+
+    Polymer({
+      is: 'ti-estado_atencion',
+      
+      ready:function(){
+        this.async(function(){
+          console.log(this.$.grid);
+
+          this.$.grid.columns[0].renderer = function(cell) {
+            cell.element.innerHTML = cell.row.index+1;
+          };
+
+          this.$.grid.columns[1].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          this.$.grid.columns[2].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          this.$.grid.columns[3].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          this.$.grid.columns[4].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+
+          this.$.grid.columns[25].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          this.$.grid.columns[27].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          this.$.grid.columns[29].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          this.$.grid.columns[31].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          this.$.grid.columns[35].renderer = function(cell) {
+            cell.element.innerHTML =  window.aicl.formatDate(cell.data);
+          };
+          //this.$.grid.size = this._datosFiltrados.length;
+        });
+      },
+
+      properties: {
+        
+        _datosCompletos:
+        {
+          type:Array, value:[]
+        },
+
+        _datosFiltrados:{
+          type:Array, value:[],
+          observer:'_actualizarGrid'
+        },
+
+        peticion:{
+          type :Object,
+          value: null,
+          notify: true,
+          observer:'_consultarEstadoAtencion'
+        }
+
+      },
+
+      _consultarEstadoAtencion:function(estadoAtencion){
+          if(Object.isEmptyOrNull(estadoAtencion)) return;
+          this.$.ajax.params= estadoAtencion;
+          this.$.ajax.execute();
+      },
+
+      _handleEstadoAtencionConsultado:function(data){
+          console.log("ti-estado_atencion consultado Response",data.detail.Response.Results);
+          this._datosCompletos= data.detail.Response.Results;
+          this._datosFiltrados= this._datosCompletos;
+      },
+
+      _actualizarGrid:function(datos){
+        this.$.grid.items = function(params, callback) {
+          callback(datos.slice(params.index, params.index + params.count), datos.length );
+        };
+      }
+
+    });
+
+  </script>
+
+</dom-module>

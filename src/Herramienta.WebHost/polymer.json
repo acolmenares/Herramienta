@@ -4,6 +4,7 @@
   "fragments": [
     "src/ti-menu.html.html",
     "src/ti-recibe_racion.html",
+    "src/ti-estado_atencion.html",
     "src/my-view404.html"
   ],
   "sourceGlobs": [

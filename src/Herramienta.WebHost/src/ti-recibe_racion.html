@@ -1,4 +1,27 @@
 <!-- aqui!
+http://localhost:8090/hr/hr-api/estadoatencion/consultar.json
+?FechaRadicacionDesde=20161001
+&FechaRadicacionHasta=20161031
+&Indicador=Excluidos
+&Municipio=Popay%C3%A1n
+
+Posibles parametros para estadoatencion/consultar.json
+FechaRadicacionDesde obligatorio
+FechaRadicacionHasta obligatorio  
+Periodo	 	string	No	 -> record.Periodo o rangoSeleccionado.Periodo
+Regional	string	No   ->	 ignorar....
+Municipio	string	No	  ->rangoSeleccionado.Municipio
+AnioMes		string	No	-> rangoSeleccionado.AnioMes o Blanco segun donde se pique
+Indicador   string  -> segun donde se de el click
+
+rangoSeleccionado:
+AnioMes:"201610"
+FechaRadicacionDesde:"/Date(1475298000000-0000)/"
+FechaRadicacionHasta:"/Date(1477890000000-0000)/"
+Municipio:"Popayán"
+Texto:"Q1 201610",
+Periodo:"Q1"
+
 @license
 Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -14,7 +37,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <template>
 <style>
 	:host {
-		padding: : 0px;
+		padding:  0px;
 		font-size: 8pt;
 		font-family: 'Tahoma', 'Roboto', 'Noto', sans-serif;
 		margin: 0;
@@ -98,7 +121,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   rangos-listbox{
     padding: 0px 10px;
   }
-}
 
 </style>
 
@@ -110,51 +132,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			<div class="pila">
 				<div class="row hd-color">
 					<!-- encabezado !-->
-					<div class="flexchild header narrow">Periodo</div>
-					<div class="flexchild header">Municipio</div>
-					<div class="flexchild header">Mes</div>
-					<div class="flexchild header-vertical fh narrowest">Radicados durante el Mes</div>
+					<template is="dom-repeat" items="{{columnas}}" filter="_esGrupoUno" >
+						<div class$="[[item.ClaseEncabezado]]">[[item.Titulo]]</div>
+					</template>
+					
 					<div class="">
 						<div class="flexchild header">Declarantes del mes Excluidos</div>
 						<div class="row">
-							<div class="flexchild header-vertical narrowest">Mas de 2 Declaraciones Por el mismo Hecho</div>
-							<div class="flexchild header-vertical narrowest">Superó el limite de un mes para ser contactado</div>
-							<div class="flexchild header-vertical narrowest">No asistió a 2 programaciones en primera entrega</div>
-							<div class="flexchild header-vertical narrowest">Incluido en otro núcleo familiar por el mismo hecho</div>
-							<div class="flexchild header-vertical narrowest">Extemporaneos</div>
-							<div class="flexchild header-vertical narrowest">Fuera de la Ciudad</div>
-							<div class="flexchild header-vertical narrowest">No Desplazado</div>
-							<div class="flexchild header-vertical narrowest">Masivo</div>
-							<div class="flexchild header-vertical narrowest">Reciben ayuda de otra fuente</div>
-							<div class="flexchild header-vertical narrowest">Intraurbano</div>
-							<div class="flexchild header-vertical narrowest">Cultivos Ilicitos</div>
-							<div class="flexchild header-vertical narrowest">Total</div>
+							<template is="dom-repeat" items="{{columnas}}" filter="_esGrupoDos" >
+								<div class$="[[item.ClaseEncabezado]]">[[item.Titulo]]</div>
+							</template>	
 						</div>
 					</div>
-					<div class="flexchild header-vertical fh narrowest">Elegibles</div>
+					<template is="dom-repeat" items="{{columnas}}" filter="_esGrupoTres" >
+						<div class$="[[item.ClaseEncabezado]]">[[item.Titulo]]</div>
+					</template>
+					
 					<div class="">
 						<div class="flexchild header">Atendidos en Primera Entrega</div>
 						<div class="row">
-							<div class="flexchild header-vertical narrowest">Declarantes del Mes</div>
-							<div class="flexchild header-vertical narrowest">Radicados en Meses Anteriores (mismo periodo)</div>
-							<div class="flexchild header-vertical narrow">Radicados en Periodos Anteriores</div>
-							<div class="flexchild header-vertical narrow">Total Atendidos en Primera Entrega</div>
+							<template is="dom-repeat" items="{{columnas}}" filter="_esGrupoCuatro" >
+								<div class$="[[item.ClaseEncabezado]]">[[item.Titulo]]</div>
+							</template>
 						</div>
 					</div>
-					<div class="flexchild header-vertical fh narrowest">Atendidos en Segunda Entrega</div>
+					<template is="dom-repeat" items="{{columnas}}" filter="_esGrupoCinco" >
+						<div class$="[[item.ClaseEncabezado]]">[[item.Titulo]]</div>
+					</template>
 					<div class="">
 						<div class="flexchild header">Pendientes por Atender</div>
 						<div class="row">
-							<div class="flexchild header-vertical narrowest">Pendientes por Aplicar Filtros de Elegibilidad</div>
-							<div class="flexchild header-vertical">Pendiente por programar(Elegible SI, Contactado SI, Sin Programacion)</div>
-							<div class="flexchild header-vertical">NO Ubicados / Sin Contacto (Elegibles SI, Contacatdo NO)</div>
-							<div class="flexchild header-vertical">Programados Próximo Mes (Elegible SI, Contactado SI, Programado SI-Fecha Posterior)</div>
-							<div class="flexchild header-vertical narrowest">Programados que NO Asistieron</div>
-							<div class="flexchild header-vertical narrowest">Total Pendientes Por Atender</div>
+							<template is="dom-repeat" items="{{columnas}}" filter="_esGrupoSies" >
+								<div class$="[[item.ClaseEncabezado]]">[[item.Titulo]]</div>
+							</template>
 						</div>
 					</div>
-					<div class="flexchild header-vertical fh narrowest">Comprobación de Resultados</div>
-					<div class="flexchild header-vertical fh narrow">% de Atendidos</div>
+					<template is="dom-repeat" items="{{columnas}}" filter="_esGrupoSiete" >
+						<div class$="[[item.ClaseEncabezado]]">[[item.Titulo]]</div>
+					</template>
 				</div>
 				<!--  fin encabezado !-->
 				<!-- !-->
@@ -167,65 +182,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 								<div class="row">
 									<div class="flexchild">{{mes.Mes}}</div>
 									<!-- <template is="dom-repeat" items="{{mes.Data}}" as="dato" index-as="idx"> !-->
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Radicados')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'DobleDeclaracion')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'SuperoLimite')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'NoAsisistioDosProgramaciones')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'IncluyoPersonaDeOtroNucleo')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Extemporaneidad')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'FueraDeLaCiudad')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'NoEsDeplazado')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Masivo')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidoPorOtraFuente')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Intraurbano')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'CultivosIlicitos')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Excluidos')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'Elegibles')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidosPrimeraEntregaEnElMesDeRadicacion')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidosPrimeraEntregaRadicadosEnMesesAnteriores')]]</div>
-										<div class="flexchild narrow">[[_datoMes( mes.Indicador, 'AtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores')]]</div>
-										<div class="flexchild narrow">[[_datoMes( mes.Indicador, 'TotalAtendidosEnPrimeraEntregaEnElMes')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'AtendidosEnSegundaEntrega')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'PendientePorAplicarFiltros')]]</div>
-										<div class="flexchild">[[_datoMes( mes.Indicador, 'PendientePorProgramar')]]</div>
-										<div class="flexchild">[[_datoMes( mes.Indicador, 'PendienteNoContactado')]]</div>
-										<div class="flexchild">[[_datoMes( mes.Indicador, 'PendienteProgramadoProximoMes')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'PendienteProgramadoQueNoAsistio')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'TotalPendientesPorAtender')]]</div>
-										<div class="flexchild narrowest">[[_datoMes( mes.Indicador, 'SumaComprobacion')]]</div>
-										<div class="flexchild narrow">[[_datoMesPorcentaje(mes.Indicador, 'PorcentajeAtendidos')]]</div>
+									<template is="dom-repeat" items="[[columnas]]" filter="_esIndicador">
+										<div indicador$="[[item.Nombre]]" on-tap="_mostrarDetalleMes" class$="[[item.ClaseContenido]]">[[_datoMes( mes.Indicador, item.Nombre)]]</div>										
+									</template>	
 									<!--</template> !-->
 								</div>
 							</template>
 							<div class="row subtotal">
 								<div class="flexchild">Subtotal {{record.Periodo}}</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Radicados')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'DobleDeclaracion')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'SuperoLimite')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'NoAsisistioDosProgramaciones')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'IncluyoPersonaDeOtroNucleo')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Extemporaneidad')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'FueraDeLaCiudad')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'NoEsDeplazado')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Masivo')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidoPorOtraFuente')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Intraurbano')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'CultivosIlicitos')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Excluidos')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'Elegibles')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidosPrimeraEntregaEnElMesDeRadicacion')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidosPrimeraEntregaRadicadosEnMesesAnteriores')]]</div>
-								<div class="flexchild narrow">[[_datoPeriodo(record, 'AtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores')]]</div>
-								<div class="flexchild narrow">[[_datoPeriodo(record, 'TotalAtendidosEnPrimeraEntregaEnElMes')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'AtendidosEnSegundaEntrega')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'PendientePorAplicarFiltros')]]</div>
-								<div class="flexchild">[[_datoPeriodo(record, 'PendientePorProgramar')]]</div>
-								<div class="flexchild">[[_datoPeriodo(record, 'PendienteNoContactado')]]</div>
-								<div class="flexchild">[[_datoPeriodo(record, 'PendienteProgramadoProximoMes')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'PendienteProgramadoQueNoAsistio')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'TotalPendientesPorAtender')]]</div>
-								<div class="flexchild narrowest">[[_datoPeriodo(record, 'SumaComprobacion')]]</div>
-								<div class="flexchild narrow">[[_datoPeriodoPorcentaje(record)]]</div>
+								<template is="dom-repeat" items="[[columnas]]" filter="_esIndicador">
+									<div indicador$="[[item.Nombre]]" on-tap="_mostrarDetallePeriodo" class$="[[item.ClaseContenido]]">[[_datoPeriodo( record, item.Nombre)]]</div>										
+								</template>
 							</div>
 						</div>
 					</div>
@@ -233,33 +200,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 				<div class="row totales-bg">
 					<div class="flexchild totales-mw"> Totales </div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'Radicados')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'DobleDeclaracion')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'SuperoLimite')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'NoAsisistioDosProgramaciones')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'IncluyoPersonaDeOtroNucleo')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'Extemporaneidad')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'FueraDeLaCiudad')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'NoEsDeplazado')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'Masivo')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidoPorOtraFuente')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'Intraurbano')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'CultivosIlicitos')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'Excluidos')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'Elegibles')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidosPrimeraEntregaEnElMesDeRadicacion')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidosPrimeraEntregaRadicadosEnMesesAnteriores')]]</div>
-					<div class="flexchild narrow">[[_datoTotal(datos,'AtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores')]]</div>
-					<div class="flexchild narrow">[[_datoTotal(datos,'TotalAtendidosEnPrimeraEntregaEnElMes')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'AtendidosEnSegundaEntrega')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'PendientePorAplicarFiltros')]]</div>
-					<div class="flexchild">[[_datoTotal(datos,'PendientePorProgramar')]]</div>
-					<div class="flexchild">[[_datoTotal(datos,'PendienteNoContactado')]]</div>
-					<div class="flexchild">[[_datoTotal(datos,'PendienteProgramadoProximoMes')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'PendienteProgramadoQueNoAsistio')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'TotalPendientesPorAtender')]]</div>
-					<div class="flexchild narrowest">[[_datoTotal(datos,'SumaComprobacion')]]</div>
-					<div class="flexchild narrow">[[_datoTotalPorcentaje(datos)]]</div>
+					<template is="dom-repeat" items="[[columnas]]" filter="_esIndicador">
+						<div indicador$="[[item.Nombre]]" on-tap="_mostrarDetalleTotal" class$="[[item.ClaseContenido]]">[[_datoTotal( datos, item.Nombre)]]</div>										
+					</template>
 				</div>
 				<!-- !-->
 			</div>
@@ -272,12 +215,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       is: 'ti-recibe_racion',
 
-			properties: {
+	  properties: {
 
 				/*
 				datos :[{Periodo:"Q1", Meses:[{AnioMes:"201510", Mes:"Octubre", Indicador:[data,data] },
                 {Periodo:"Q2", Meses:[{AnioMes:"201601", Indicador:[data,data] },
 				*/
+		columnas:{
+			type:Array, 
+			value:[
+			{Nombre:"Periodo", Grupo:1, Titulo:"Periodo", ClaseEncabezado:"flexchild header narrow", ClaseContenido:""},
+			{Nombre:"Municipio", Grupo:1, Titulo:"Municipio", ClaseEncabezado:"flexchild header", ClaseContenido:"" },
+			{Nombre:"Mes", Grupo:1, Titulo:"Mes", ClaseEncabezado:"flexchild header", ClaseContenido:"" },
+			{Nombre:"Radicados", Grupo:1, Titulo:"Radicados durante el Mes", ClaseEncabezado:"flexchild header-vertical fh narrowest", ClaseContenido:"flexchild narrowest", Indicador:true },
+			{Nombre:"DobleDeclaracion", Grupo:2, Titulo:"Mas de 2 Declaraciones Por el mismo Hecho", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"SuperoLimite", Grupo:2, Titulo:"Superó el limite de un mes para ser contactado", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"NoAsisistioDosProgramaciones", Grupo:2, Titulo:"No asistió a 2 programaciones en primera entrega", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"IncluyoPersonaDeOtroNucleo", Grupo:2, Titulo:"Incluido en otro núcleo familiar por el mismo hecho", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"Extemporaneidad", Grupo:2, Titulo:"Extemporaneos", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"FueraDeLaCiudad", Grupo:2, Titulo:"Fuera de la Ciudad", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"NoEsDeplazado", Grupo:2, Titulo:"No Desplazado", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"Masivo", Grupo:2, Titulo:"Masivo", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"AtendidoPorOtraFuente", Grupo:2, Titulo:"Reciben ayuda de otra fuente", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"Intraurbano", Grupo:2, Titulo:"Intraurbano", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"CultivosIlicitos", Grupo:2, Titulo:"Cultivos Ilicitos", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"Excluidos", Grupo:2, Titulo:"Total", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"Elegibles", Grupo:3, Titulo:"Elegibles", ClaseEncabezado:"flexchild header-vertical fh narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"AtendidosPrimeraEntregaEnElMesDeRadicacion", Grupo:4, Titulo:"Declarantes del Mes", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"AtendidosPrimeraEntregaRadicadosEnMesesAnteriores", Grupo:4, Titulo:"Radicados en Meses Anteriores (mismo periodo)", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"AtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores", Grupo:4, Titulo:"Radicados en Periodos Anteriores", ClaseEncabezado:"flexchild header-vertical narrow", ClaseContenido:"flexchild narrow", Indicador:true},
+			{Nombre:"TotalAtendidosEnPrimeraEntregaEnElMes", Grupo:4, Titulo:"Total Atendidos en Primera Entrega", ClaseEncabezado:"flexchild header-vertical narrow", ClaseContenido:"flexchild narrow", Indicador:true},
+			{Nombre:"AtendidosEnSegundaEntrega", Grupo:5, Titulo:"Atendidos en Segunda Entrega", ClaseEncabezado:"flexchild header-vertical fh narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"PendientePorAplicarFiltros", Grupo:6, Titulo:"Pendientes por Aplicar Filtros de Elegibilidad", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"PendientePorProgramar", Grupo:6, Titulo:"Pendiente por programar(Elegible SI, Contactado SI, Sin Programacion)", ClaseEncabezado:"flexchild header-vertical", ClaseContenido:"flexchild", Indicador:true},
+			{Nombre:"PendienteNoContactado", Grupo:6, Titulo:"NO Ubicados / Sin Contacto (Elegible SI, Contactado NO)", ClaseEncabezado:"flexchild header-vertical", ClaseContenido:"flexchild", Indicador:true},
+			{Nombre:"PendienteProgramadoProximoMes", Grupo:6, Titulo:"Programados Próximo Mes (Elegible SI, Contactado SI, Programado SI-Fecha Posterior)", ClaseEncabezado:"flexchild header-vertical", ClaseContenido:"flexchild", Indicador:true},
+			{Nombre:"PendienteProgramadoQueNoAsistio", Grupo:6, Titulo:"Programados que NO Asistieron", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"TotalPendientesPorAtender", Grupo:6, Titulo:"Total Pendientes Por Atender", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"SumaComprobacion", Grupo:7, Titulo:"Comprobación de Resultados", ClaseEncabezado:"flexchild header-vertical fh narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
+			{Nombre:"PorcentajeAtendidos", Grupo:7, Titulo:"% de Atendidos", ClaseEncabezado:"flexchild header-vertical fh narrow", ClaseContenido:"flexchild narrow", Indicador:true}
+			]
+		},
+		
         datos:
         {
           type:Array, value:[]
@@ -289,10 +268,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true,
           observer:'_consultarRecibeRacion'
         },
-				municipio:{
-					type:String,
-					value:""
-				}
+
+		municipio:{
+			type:String,
+			value:""
+		}
 
       },
 
@@ -300,24 +280,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log("ti-recibe_racion ready", this.rangoSeleccionado);
       },
 
-			_datoMes: function(indicador,  path) {
-				var datoMes=0;
-				for (var mes in indicador){
+	  _datoMes: function(indicador,  path) { 
+		var datoMes=0;
+		for (var mes in indicador){
          datoMes+= indicador[mes][path];
-				 }
-				 return datoMes;
-			},
+		}
+		return (path!="PorcentajeAtendidos") ? datoMes: (datoMes*100.00).toFixed(2); 
+	  },
 
-			_datoMesPorcentaje:function(indicador,path)
-			{
-				return (this._datoMes(indicador,path)*100.00).toFixed(2);
-			},
+	  _datoMesPorcentaje:function(indicador,path)
+	  {
+		return (this._datoMes(indicador,path)*100.00).toFixed(2);
+	  },
 
       _datosItem: function(change, index, path) {
        // this.get(path, root) returns a value for a path
        // relative to a root object.
        return this.get(path, change.base[index]);
-     },
+      },
 
      _datosItemPorcentaje: function(change, index, path) {
       // this.get(path, root) returns a value for a path
@@ -327,13 +307,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      },
 
      _datoPeriodo: function(periodo, path) {
-      var datoPeriodo=0;
-      for (var mes in periodo.Meses){
-        for( var dato in  periodo.Meses[mes].Indicador ){
-          datoPeriodo+= periodo.Meses[mes].Indicador[dato][path];
-        }
-      }
-      return datoPeriodo;
+		 return (path!="PorcentajeAtendidos") ? this._datoPeriodoValor(periodo, path): this._datoPeriodoPorcentaje(periodo);
      },
 
      _datoPeriodoPorcentaje: function(periodo) {
@@ -346,12 +320,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        return (porcentaje*100.00).toFixed(2);
      },
 
+	 _datoPeriodoValor:function(periodo, path){
+		 var datoPeriodo=0;
+		 for (var mes in periodo.Meses){
+			 for( var dato in  periodo.Meses[mes].Indicador ){
+				 datoPeriodo+= periodo.Meses[mes].Indicador[dato][path];
+			 }
+		 } 
+		 return datoPeriodo;
+	 },
+
      _datoTotal: function(datos, path) {
-			 var datoTotal=0;
-       for ( var p in datos){
-         datoTotal+= this._datoPeriodo(datos[p], path);
-       }
-       return datoTotal;
+		 return (path!="PorcentajeAtendidos") ? this._datoTotalValor(datos, path): this._datoTotalPorcentaje(datos);
      },
 
      _datoTotalPorcentaje: function(datos) {
@@ -362,6 +342,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          porcentaje= atendidos/elegibles;
        }
        return (porcentaje*100).toFixed(2);
+     },
+
+	 _datoTotalValor: function(datos, path) {
+		 var datoTotal=0;
+		 for ( var p in datos){
+			 datoTotal+= this._datoPeriodo(datos[p], path);
+		 }
+		 return datoTotal;
      },
 
      _consultarRecibeRacion:function(rango){
@@ -379,19 +367,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
      _handleObjetivoConsultado:function(data){
 		  	console.log("ti-recibe_racion ObjetivoConsultado Response",data.detail.Response.Results);
-			  var municipioSeleccionado =this.rangoSeleccionado.Municipio;
+			var municipioSeleccionado =this.rangoSeleccionado.Municipio;
 		    var results = !Object.isEmptyOrNull(municipioSeleccionado)
 		 	  ? window._.filter( data.detail.Response.Results, function(v){ return v.Municipio==municipioSeleccionado; })
 		 	  : data.detail.Response.Results;
 
-				this.municipio=municipioSeleccionado;
+			this.municipio=municipioSeleccionado;
 
-			  for(var r in results){
+			for(var r in results){
 		 	 	  if( Object.isEmptyOrNull(results[r].AnioMes))
 				  {
 				 	  results[r].AnioMes = this._aniomes(results[r].Mes);
 				  }
-			  }
+			}
 
 			  var p = _.groupBy(results, function(value) { return value.Periodo;});
 			  var m=[];
@@ -424,7 +412,72 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     },
     _procesarRangoSeleccionado:function(data){
       this.rangoSeleccionado= data.detail;
-    }
+    },
+
+	_mostrarDetalleMes:function(evt,obj)
+	{
+		var estadoAtencion = {
+			FechaRadicacionDesde : this.rangoSeleccionado.FechaRadicacionDesde,
+			FechaRadicacionHasta : this.rangoSeleccionado.FechaRadicacionDesde,
+			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
+			Indicador: evt.srcElement.getAttribute('indicador'), //  string  -> segun donde se de el click
+			Periodo	:this.rangoSeleccionado.Periodo	 , //-> record.Periodo o rangoSeleccionado.Periodo
+			AnioMes	: this.rangoSeleccionado.AnioMes //	string	No	-> rangoSeleccionado.AnioMes o Blanco segun donde se pique
+			//Regional	string	No   ->	 ignorar....
+		};
+		console.log("tap mes", estadoAtencion); 
+		this.fire('mostrar-detalle', estadoAtencion );		
+	},
+
+	_mostrarDetallePeriodo:function(evt, obj){
+		var estadoAtencion = {
+			FechaRadicacionDesde : this.rangoSeleccionado.FechaRadicacionDesde,
+			FechaRadicacionHasta : this.rangoSeleccionado.FechaRadicacionDesde,
+			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
+			Indicador: evt.srcElement.getAttribute('indicador'), //  string  -> segun donde se de el click
+			Periodo	:this.rangoSeleccionado.Periodo	 //-> record.Periodo o rangoSeleccionado.Periodo
+		};
+		console.log("tap periodo", estadoAtencion); 
+		this.fire('mostrar-detalle', estadoAtencion );
+	},
+	
+	_mostrarDetalleTotal:function(evt, obj){
+		var estadoAtencion = {
+			FechaRadicacionDesde : this.rangoSeleccionado.FechaRadicacionDesde,
+			FechaRadicacionHasta : this.rangoSeleccionado.FechaRadicacionDesde,
+			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
+			Indicador: evt.srcElement.getAttribute('indicador') 
+		};
+		console.log("tap total", estadoAtencion); 
+		this.fire('mostrar-detalle', estadoAtencion );
+	},
+
+
+	_esGrupoUno: function(item) {
+		return item.Grupo == 1;
+	},
+	_esGrupoDos: function(item) {
+		return item.Grupo == 2;
+	},
+	_esGrupoTres: function(item) {
+		return item.Grupo == 3;
+	},
+	_esGrupoCuatro: function(item) {
+		return item.Grupo == 4;
+	},
+	_esGrupoCinco: function(item) {
+		return item.Grupo == 5;
+	},
+	_esGrupoSies: function(item) {
+		return item.Grupo == 6;
+	},
+	_esGrupoSiete: function(item) {
+		return item.Grupo == 7;
+	},
+	_esIndicador: function(item) {
+		return item.Indicador == true;
+	}
+
     });
 </script>
 </dom-module>

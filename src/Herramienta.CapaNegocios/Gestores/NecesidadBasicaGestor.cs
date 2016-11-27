@@ -52,7 +52,7 @@ namespace Herramienta.CapaNegocios.Gestores
 			var lista = cacheClient.Consultar(rangoFechas,
 											  () => ConsultarDesdeHerramienta_O_Generar(rangoFechas));
 
-			return new QueryResponse<TDatoObjetivo> { Results = lista };
+			return new QueryResponse<TDatoObjetivo> { Results = lista, Total=lista.Count };
 		}
 
 
