@@ -1,7 +1,8 @@
-﻿using System;
-using Herramienta.Modelos.Extensiones;
+﻿using Herramienta.Modelos.Extensiones;
 using Herramienta.Modelos.Interfaces;using Herramienta.Modelos.Objetivos;using Herramienta.Modelos.Peticiones;
 using ServiceStack;
+using System.Linq;
+using static Herramienta.Modelos.Constantes;
 
 namespace Herramienta.CapaNegocios.Gestores
 {
@@ -35,7 +36,10 @@ namespace Herramienta.CapaNegocios.Gestores
 
 		void FiltrarResponse(QueryResponse<EstadoAtencion> response, EstadoAtencionConsultar peticion)
 		{
-			if (peticion.Indicador.EstaVacia()) return;
+            response.Results = response.Results.Where(x => x.TipoDeclarante == DESPLAZADO).ToList();
+            response.Total = response.Results.Count;
+
+            if (peticion.Indicador.EstaVacia()) return;
 			var grupo = new RecibeRacion();
 			grupo.PopulateWith(peticion);
 			response.Results= filtro.FiltrarPor(peticion.Indicador, grupo, response.Results);

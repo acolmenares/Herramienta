@@ -24,7 +24,8 @@
       properties: {
         method:{type: String, value:'GET' },
         debounceDuration: {type:Number, value:300},
-        api: { type:String, value: 'hr-api/reciberacion'  } ,  //  ''
+        //api: { type:String, value: 'hr-api/reciberacion'  } ,  //  ''
+        api: { type:String, value: 'http://localhost:8090/hr/hr-api/reciberacion'  } , 
         lastResponse: { type:Object, value:function(){ return {}; }, notify: true },
         action: {type: String, value:'consultar.json' },  //QueryObjetivoDosUno
         body: { type:Object, value: null },

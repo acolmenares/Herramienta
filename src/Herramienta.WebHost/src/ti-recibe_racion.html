@@ -417,8 +417,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	_mostrarDetalleMes:function(evt,obj)
 	{
 		var estadoAtencion = {
-			FechaRadicacionDesde : this.rangoSeleccionado.FechaRadicacionDesde,
-			FechaRadicacionHasta : this.rangoSeleccionado.FechaRadicacionDesde,
+			FechaRadicacionDesde : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionDesde),
+			FechaRadicacionHasta : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionHasta),
 			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
 			Indicador: evt.srcElement.getAttribute('indicador'), //  string  -> segun donde se de el click
 			Periodo	:this.rangoSeleccionado.Periodo	 , //-> record.Periodo o rangoSeleccionado.Periodo
@@ -431,8 +431,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 	_mostrarDetallePeriodo:function(evt, obj){
 		var estadoAtencion = {
-			FechaRadicacionDesde : this.rangoSeleccionado.FechaRadicacionDesde,
-			FechaRadicacionHasta : this.rangoSeleccionado.FechaRadicacionDesde,
+			FechaRadicacionDesde : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionDesde),
+			FechaRadicacionHasta : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionHasta),
 			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
 			Indicador: evt.srcElement.getAttribute('indicador'), //  string  -> segun donde se de el click
 			Periodo	:this.rangoSeleccionado.Periodo	 //-> record.Periodo o rangoSeleccionado.Periodo
@@ -443,8 +443,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	
 	_mostrarDetalleTotal:function(evt, obj){
 		var estadoAtencion = {
-			FechaRadicacionDesde : this.rangoSeleccionado.FechaRadicacionDesde,
-			FechaRadicacionHasta : this.rangoSeleccionado.FechaRadicacionDesde,
+			FechaRadicacionDesde : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionDesde),
+			FechaRadicacionHasta : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionHasta),
 			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
 			Indicador: evt.srcElement.getAttribute('indicador') 
 		};

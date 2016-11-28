@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Herramienta.Modelos.Extensiones;
 using Herramienta.Modelos.Interfaces;
@@ -258,7 +259,8 @@ namespace Herramienta.CapaNegocios.Reglas
 						   && x.Contactado == SI
 						   && x.Programado == SI
 						   && EsProgramadoQueNoAsistio(x)
-					       && x.AnioMesProgramado == grupo.AnioMes
+                           && !x.AnioMesProgramado.EstaVacia()
+					       && x.AnioMesProgramado == (grupo.AnioMes?? x.AnioMesProgramado)
 						  )
 					.ToList();
 		}
@@ -272,6 +274,7 @@ namespace Herramienta.CapaNegocios.Reglas
 						   && x.Contactado == SI
 						   && x.Programado == SI
 					       //&& !EsProgramadoQueNoAsistio(x)
+                           && !x.AnioMesProgramado.EstaVacia()
 						   && x.AnioMesProgramado != grupo.AnioMes
 						  )
 					.ToList();
@@ -308,11 +311,11 @@ namespace Herramienta.CapaNegocios.Reglas
 		                                                        RecibeRacion grupo)
 		{
 			return
-				lista.Where(q => q.Regional == grupo.Regional
-							&& q.MunicipioAtencion == grupo.Municipio
+				lista.Where(q => q.Regional == (grupo.Regional?? q.Regional)
+							&& q.MunicipioAtencion == (grupo.Municipio?? q.MunicipioAtencion)
 							&& Atendido(q)
 							&& q.AsistioSegundaEntrega == SI
-							&& q.AnioMesSegundaEntrega == grupo.AnioMes)
+							&& q.AnioMesSegundaEntrega == ( grupo.AnioMes??q.AnioMesSegundaEntrega))
 					 .ToList();
 		}
 
@@ -347,14 +350,17 @@ namespace Herramienta.CapaNegocios.Reglas
 		List<EstadoAtencion> ConsultarAtendidosPrimeraEntregaRadicadosEnPeriodosAnteriores(List<EstadoAtencion> lista,
 		                                                                                   RecibeRacion grupo)
 		{
-			return
-				lista
-					.Where(q => Atendido(q)
-						   && q.Regional == grupo.Regional
-						   && q.MunicipioAtencion == grupo.Municipio
-						   && q.AnioMesAtencion == grupo.AnioMes
-						   && q.PeriodoRadicacion != grupo.Periodo)
-					.ToList();
+            return AgruparPorAnioMesAtencion(lista, grupo, (l, g) =>
+            {
+                return
+                lista
+                    .Where(q => Atendido(q)
+                           && q.Regional == (g.Regional ?? q.Regional)
+                           && q.MunicipioAtencion == g.Municipio
+                           && q.AnioMesAtencion ==  g.AnioMes
+                           && q.PeriodoRadicacion != g.Periodo)
+                    .ToList();
+            });
 			
 		}
 
@@ -370,25 +376,46 @@ namespace Herramienta.CapaNegocios.Reglas
 		}
 
 
-		List<EstadoAtencion> ConsultarAtendidosPrimeraEntregaRadicadosEnMesesAnteriores(List<EstadoAtencion> lista,
-		                                                                                RecibeRacion grupo)
-		{
-			return
-				lista
-					.Where(q => Atendido(q) 
-					       && q.Regional == grupo.Regional
-					       && q.MunicipioAtencion== grupo.Municipio
-					       && q.AnioMesAtencion==grupo.AnioMes
-					       && q.PeriodoRadicacion== grupo.Periodo 
-					       && q.AnioMesRadicacion!= grupo.AnioMes
-					      )
-					.ToList();
-			
-		}
+        List<EstadoAtencion> ConsultarAtendidosPrimeraEntregaRadicadosEnMesesAnteriores(List<EstadoAtencion> lista,
+                                                                                        RecibeRacion grupo)
+        {
+            return AgruparPorAnioMesAtencion(lista, grupo, (l, g) =>
+            {
+                return l
+                .Where(q => Atendido(q)
+                   && q.Regional == (g.Regional ?? q.Regional)
+                   && q.MunicipioAtencion == g.Municipio
+                   && q.AnioMesAtencion ==  g.AnioMes
+                   && q.PeriodoRadicacion == g.Periodo
+                   && q.AnioMesRadicacion != g.AnioMes
+                  )
+            .ToList();
+            });
 
-	
+        }
 
-		List<EstadoAtencion> ConsultarAtendidosPrimeraEntregaEnMesesPosteriores(List<EstadoAtencion> lista, RecibeRacion grupo)
+        private List<EstadoAtencion> AgruparPorAnioMesAtencion(List<EstadoAtencion> lista, RecibeRacion grupo, Func<List<EstadoAtencion>, RecibeRacion, List<EstadoAtencion>> func)
+        {
+            var res = new List<EstadoAtencion>();
+
+            var grupos = lista.Where(q=>Atendido(q) && q.AnioMesAtencion==(grupo.AnioMes??q.AnioMesAtencion) ).GroupBy(x => x.AnioMesAtencion).ToList();
+            foreach( var g in grupos)
+            {
+                var grupoDelAnioMes = new RecibeRacion
+                {
+                    Regional = grupo.Regional,
+                    Municipio = grupo.Municipio,
+                    AnioMes = g.Key,
+                    Periodo = g.Key.AnioMesEnPeriodo(),
+
+                };
+                res.AddRange(func(g.ToList(), grupoDelAnioMes));
+            }
+            
+            return res;
+        }
+
+        List<EstadoAtencion> ConsultarAtendidosPrimeraEntregaEnMesesPosteriores(List<EstadoAtencion> lista, RecibeRacion grupo)
 		{
 			return
 				ConsultarRadicados(lista, grupo)

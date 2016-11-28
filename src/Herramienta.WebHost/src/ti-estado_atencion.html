@@ -53,24 +53,15 @@
             <col name="FechaSegundaEntrega">
             <col name="AsistioSegundaEntrega">
           </colgroup>
-          <tfoot>
-            <tr>
-              <th>
-                <span>Total:[[_datosCompletos.length]]</span>
-              </th>
-              <th>
-                <span hidden="[[_datosCompletos.length==_datosFiltrados.length]]">Filtrados:[[_datosFiltrados.length]]</span>
-              </th>
-            </tr>
-          </tfoot>
         </table>
       </vaadin-grid>
+      <span>Total:[[_datosCompletos.length]]</span>
+      <span hidden$="{{!_deberiaMostrarTotalFiltrados}}"> | Filtrados:[[_datosFiltrados.length]]</span>
     </paper-material>
     
   </template>
   <script>
     
-
     Polymer({
       is: 'ti-estado_atencion',
       
@@ -131,8 +122,12 @@
           value: null,
           notify: true,
           observer:'_consultarEstadoAtencion'
-        }
+        },
 
+        _deberiaMostrarTotalFiltrados:{
+          computed: '_calcularDeberiaMostrarTotalFiltrado(_datosCompletos,_datosFiltrados)'
+        }
+      
       },
 
       _consultarEstadoAtencion:function(estadoAtencion){
@@ -148,9 +143,15 @@
       },
 
       _actualizarGrid:function(datos){
-        this.$.grid.items = function(params, callback) {
-          callback(datos.slice(params.index, params.index + params.count), datos.length );
-        };
+        this.async(function(){
+          this.$.grid.items = function(params, callback) {
+            callback(datos.slice(params.index, params.index + params.count), datos.length );
+          };
+        })
+      },
+
+      _calcularDeberiaMostrarTotalFiltrado:function(_datosCompletos,_datosFiltrados){
+        return _datosCompletos.length !=_datosFiltrados.length;
       }
 
     });

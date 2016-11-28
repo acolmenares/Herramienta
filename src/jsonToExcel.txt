@@ -1,0 +1,176 @@
+http://epplus.codeplex.com/
+
+http://www.mikesknowledgebase.com/pages/CSharp/ExportToExcel.htm
+http://www.leniel.net/2009/10/npoi-with-excel-table-and-dynamic-chart.html#sthash.JhipVpZL.dpbs
+
+testJson = [
+    {
+        "name": "Tony Peña",
+        "city": "New York",
+        "country": "United States",
+        "birthdate": "1978-03-15",
+        "amount": 42
+
+    },
+    {
+        "name": "?a????? Thessaloniki",
+        "city": "Athens",
+        "country": "Greece",
+        "birthdate": "1987-11-23",
+        "amount": 42
+    }
+];
+for(var i=0; i<10000; i++){
+  testJson.push(
+    {
+        "name": "Tony Peña",
+        "city": "New York",
+        "country": "United States",
+        "birthdate": "1978-03-15",
+        "amount": 42
+
+    });
+
+}
+
+// Simple type mapping; dates can be hard
+// and I would prefer to simply use `datevalue`
+// ... you could even add the formula in here.
+testTypes = {
+    "name": "String",
+    "city": "String",
+    "country": "String",
+    "birthdate": "DateTime",
+    "amount": "Number"
+};
+
+emitXmlHeader = function () {
+    var headerRow =  '<Row>\n';
+    for (var colName in testTypes) {
+        headerRow += '  <Cell>\n';
+        headerRow += '    <Data ss:Type="String">';
+        headerRow += colName + '</Data>\n';
+        headerRow += '  </Cell>\n';        
+    }
+    headerRow += '</Row>\n';    
+    return '<?xml version="1.0"?> \n' +
+'<?mso-application progid="Excel.Sheet"?> \n' +
+'<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" \n' +
+' xmlns:o="urn:schemas-microsoft-com:office:office" \n' +
+' xmlns:x="urn:schemas-microsoft-com:office:excel" \n' +
+' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" \n' +
+' xmlns:html="http://www.w3.org/TR/REC-html40"> \n' +
+' <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"> \n' +
+'  <Version>15.00</Version> \n' +
+' </DocumentProperties> \n' +
+' <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office"> \n' +
+'  <AllowPNG/> \n' +
+' </OfficeDocumentSettings> \n' +
+' <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"> \n' +
+'  <WindowHeight>2760</WindowHeight> \n' +
+'  <WindowWidth>7470</WindowWidth> \n' +
+'  <WindowTopX>0</WindowTopX> \n' +
+'  <WindowTopY>0</WindowTopY> \n' +
+'  <ProtectStructure>False</ProtectStructure> \n' +
+'  <ProtectWindows>False</ProtectWindows> \n' +
+' </ExcelWorkbook> \n' +
+' <Styles> \n' +
+'  <Style ss:ID="Default" ss:Name="Normal"> \n' +
+'   <Alignment ss:Vertical="Bottom"/> \n' +
+'   <Borders/> \n' +
+'   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000"/> \n' +
+'   <Interior/> \n' +
+'   <NumberFormat/> \n' +
+'   <Protection/> \n' +
+'  </Style> \n' +
+'  <Style ss:ID="s62"> \n' +
+'   <NumberFormat ss:Format="yyyy\-mm\-dd;@"/> \n' +
+'  </Style> \n' +
+' </Styles> \n' +
+' <Worksheet ss:Name="Sheet1"> \n' +
+' <Table ss:DefaultColumnWidth="60" ss:DefaultRowHeight="15">\n' + headerRow;
+};
+
+emitXmlFooter = function() {
+    return '\n</Table>\n' +
+           '</Worksheet>\n' +
+           '</Workbook>\n';
+};
+
+jsonToSsXml = function (jsonObject) {
+    var row;
+    var col;
+    var xml;
+    var data = typeof jsonObject != "object" 
+             ? JSON.parse(jsonObject) 
+             : jsonObject;
+
+    xml = emitXmlHeader();
+
+    for (row = 0; row < data.length; row++) {
+        xml += '<Row>\n';
+
+        for (col in data[row]) {
+            //xml += '  <Cell>\n' ;
+            xml += ( '  <Cell'+ ((testTypes[col]=="DateTime")? ' ss:StyleID="s62"':'')  +  '>\n' );
+            xml += '    <Data ss:Type="' + testTypes[col]  + '">';
+            xml += data[row][col] + '</Data>\n';
+            xml += '  </Cell>\n';
+        }
+
+        xml += '</Row>\n';
+    }
+
+    xml += emitXmlFooter();
+    return xml;  
+};
+
+console.log(jsonToSsXml(testJson));
+window.open("data:application/vnd.ms-excel," + encodeURI(jsonToSsXml(testJson)));
+
+
+var uri ="data:application/vnd.ms-excel," + encodeURI(jsonToSsXml(testJson));
+
+// Now the little tricky part.
+    // you can use either>> window.open(uri);
+    // but this will not work in some browsers
+    // or you will not get the correct file extension    
+    
+    //this trick will generate a temp <a /> tag
+    var link = document.createElement("a");    
+    link.href = uri;
+    
+    //set the visibility hidden so it will not effect on your web-layout
+    link.style = "visibility:hidden";
+    link.download = "prueba" + ".xml";
+    
+    //this part will append the anchor tag and remove it after automatic click
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+
+
+
+<a id="test" href="" onclick="downloadReport();">Test.xls</a>
+
+
+function download (content, filename, contentType) {
+    if (!contentType) contentType = 'application/octet-stream';
+    var a = document.getElementById('test');
+    var blob = new Blob([content], {
+        'type': contentType
+    });
+    a.href = window.URL.createObjectURL(blob);
+    a.download = filename;
+    window.navigator.msSaveOrOpenBlob(blob,filename);
+};
+
+function downloadReport()
+{
+    download(jsonToSsXml(testJson), 'test.xls',       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+};
+
+
+http://stackoverflow.com/questions/20739941/export-json-to-csv-or-excel-with-utf-8-e-g-greek-encoding-using-javascript
+http://jsfiddle.net/kmqz9/223/

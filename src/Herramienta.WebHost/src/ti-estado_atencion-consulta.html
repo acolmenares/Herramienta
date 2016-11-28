@@ -24,7 +24,7 @@
       properties: {
         method:{type: String, value:'GET' },
         debounceDuration: {type:Number, value:300},
-        api: { type:String, value: 'hr-api/estadoatencion'  } ,  //  ''
+        api: { type:String, value: 'http://localhost:8090/hr/hr-api/estadoatencion'  } ,  //  ''
         lastResponse: { type:Object, value:function(){ return {}; }, notify: true },
         action: {type: String, value:'consultar.json' },  
         body: { type:Object, value: null },
