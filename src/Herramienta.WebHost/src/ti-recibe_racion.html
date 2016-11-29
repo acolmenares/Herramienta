@@ -32,10 +32,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <script src="../bower_components/lodash/lodash.min.js"></script>
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 
 <dom-module id="ti-recibe_racion">
 <template>
-<style>
+<style include="iron-flex">
 	:host {
 		padding:  0px;
 		font-size: 8pt;
@@ -125,7 +126,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </style>
 
 <ti-recibe_racion-consulta on-request-completed="_handleObjetivoConsultado" id="ajax"></ti-recibe_racion-consulta>
-<rangos-listbox rangos="[[rangos]]"  on-rango-seleccionado="_procesarRangoSeleccionado"></rangos-listbox>
+<rangos-listbox class="flex-auto" rangos="[[rangos]]"  on-rango-seleccionado="_procesarRangoSeleccionado"></rangos-listbox>
 <div class="row" style="padding:0px 4px;">
 	<div class="container">
 		<div class="row">
