@@ -315,7 +315,8 @@ namespace Herramienta.CapaNegocios.Reglas
 							&& q.MunicipioAtencion == (grupo.Municipio?? q.MunicipioAtencion)
 							&& Atendido(q)
 							&& q.AsistioSegundaEntrega == SI
-							&& q.AnioMesSegundaEntrega == ( grupo.AnioMes??q.AnioMesSegundaEntrega))
+                            && q.AnioMesSegundaEntrega.AnioMesEnPeriodo()== (grupo.Periodo ?? q.AnioMesSegundaEntrega.AnioMesEnPeriodo())
+                            && q.AnioMesSegundaEntrega == ( grupo.AnioMes??q.AnioMesSegundaEntrega))
 					 .ToList();
 		}
 
@@ -398,7 +399,9 @@ namespace Herramienta.CapaNegocios.Reglas
         {
             var res = new List<EstadoAtencion>();
 
-            var grupos = lista.Where(q=>Atendido(q) && q.AnioMesAtencion==(grupo.AnioMes??q.AnioMesAtencion) ).GroupBy(x => x.AnioMesAtencion).ToList();
+            var grupos = lista.Where(q=>Atendido(q) && q.AnioMesAtencion==(grupo.AnioMes??q.AnioMesAtencion) && q.PeriodoAtencion==(grupo.Periodo?? q.PeriodoAtencion) )
+                .GroupBy(x => x.AnioMesAtencion).ToList();
+
             foreach( var g in grupos)
             {
                 var grupoDelAnioMes = new RecibeRacion

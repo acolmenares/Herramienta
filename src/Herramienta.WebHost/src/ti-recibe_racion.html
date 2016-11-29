@@ -183,7 +183,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 									<div class="flexchild">{{mes.Mes}}</div>
 									<!-- <template is="dom-repeat" items="{{mes.Data}}" as="dato" index-as="idx"> !-->
 									<template is="dom-repeat" items="[[columnas]]" filter="_esIndicador">
-										<div indicador$="[[item.Nombre]]" on-tap="_mostrarDetalleMes" class$="[[item.ClaseContenido]]">[[_datoMes( mes.Indicador, item.Nombre)]]</div>										
+										<div indicador$="[[item.Nombre]]" periodo$="[[record.Periodo]]" aniomes$="[[mes.AnioMes]]" on-tap="_mostrarDetalleMes" class$="[[item.ClaseContenido]]">[[_datoMes( mes.Indicador, item.Nombre)]]</div>										
 									</template>	
 									<!--</template> !-->
 								</div>
@@ -191,7 +191,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 							<div class="row subtotal">
 								<div class="flexchild">Subtotal {{record.Periodo}}</div>
 								<template is="dom-repeat" items="[[columnas]]" filter="_esIndicador">
-									<div indicador$="[[item.Nombre]]" on-tap="_mostrarDetallePeriodo" class$="[[item.ClaseContenido]]">[[_datoPeriodo( record, item.Nombre)]]</div>										
+									<div indicador$="[[item.Nombre]]" periodo$="[[record.Periodo]]"  on-tap="_mostrarDetallePeriodo" class$="[[item.ClaseContenido]]">[[_datoPeriodo( record, item.Nombre)]]</div>										
 								</template>
 							</div>
 						</div>
@@ -252,8 +252,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			{Nombre:"PendienteProgramadoProximoMes", Grupo:6, Titulo:"Programados Próximo Mes (Elegible SI, Contactado SI, Programado SI-Fecha Posterior)", ClaseEncabezado:"flexchild header-vertical", ClaseContenido:"flexchild", Indicador:true},
 			{Nombre:"PendienteProgramadoQueNoAsistio", Grupo:6, Titulo:"Programados que NO Asistieron", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
 			{Nombre:"TotalPendientesPorAtender", Grupo:6, Titulo:"Total Pendientes Por Atender", ClaseEncabezado:"flexchild header-vertical narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
-			{Nombre:"SumaComprobacion", Grupo:7, Titulo:"Comprobación de Resultados", ClaseEncabezado:"flexchild header-vertical fh narrowest", ClaseContenido:"flexchild narrowest", Indicador:true},
-			{Nombre:"PorcentajeAtendidos", Grupo:7, Titulo:"% de Atendidos", ClaseEncabezado:"flexchild header-vertical fh narrow", ClaseContenido:"flexchild narrow", Indicador:true}
+			{Nombre:"SumaComprobacion", Grupo:7, Titulo:"Comprobación de Resultados", ClaseEncabezado:"flexchild header-vertical fh narrowest", ClaseContenido:"flexchild narrowest", Indicador:true, NoMostrarDetalle:true},
+			{Nombre:"PorcentajeAtendidos", Grupo:7, Titulo:"% de Atendidos", ClaseEncabezado:"flexchild header-vertical fh narrow", ClaseContenido:"flexchild narrow", Indicador:true, NoMostrarDetalle:true}
 			]
 		},
 		
@@ -414,34 +414,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.rangoSeleccionado= data.detail;
     },
 
+	_noMostrarDetalle:function(evt){
+		var indicador = evt.srcElement.getAttribute('indicador');
+		var columna = _.find(this.columnas, function(o) { return o.Nombre == indicador; })
+		return (columna && columna.NoMostrarDetalle) 
+	},
+
 	_mostrarDetalleMes:function(evt,obj)
 	{
+		if( this._noMostrarDetalle(evt)) return;
+
 		var estadoAtencion = {
 			FechaRadicacionDesde : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionDesde),
 			FechaRadicacionHasta : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionHasta),
-			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
+			Municipio : this.rangoSeleccionado.Municipio, //	string	 ->rangoSeleccionado.Municipio
 			Indicador: evt.srcElement.getAttribute('indicador'), //  string  -> segun donde se de el click
-			Periodo	:this.rangoSeleccionado.Periodo	 , //-> record.Periodo o rangoSeleccionado.Periodo
-			AnioMes	: this.rangoSeleccionado.AnioMes //	string	No	-> rangoSeleccionado.AnioMes o Blanco segun donde se pique
+			Periodo	: evt.srcElement.getAttribute('periodo')	 , //-> record.Periodo 
+			AnioMes	: evt.srcElement.getAttribute('aniomes') //	string	->  segun donde se pique
 			//Regional	string	No   ->	 ignorar....
 		};
+		
 		console.log("tap mes", estadoAtencion); 
 		this.fire('mostrar-detalle', estadoAtencion );		
 	},
 
 	_mostrarDetallePeriodo:function(evt, obj){
+		
+		if( this._noMostrarDetalle(evt)) return;
+
 		var estadoAtencion = {
 			FechaRadicacionDesde : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionDesde),
 			FechaRadicacionHasta : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionHasta),
 			Municipio : this.rangoSeleccionado.Municipio, //	string	No	  ->rangoSeleccionado.Municipio
 			Indicador: evt.srcElement.getAttribute('indicador'), //  string  -> segun donde se de el click
-			Periodo	:this.rangoSeleccionado.Periodo	 //-> record.Periodo o rangoSeleccionado.Periodo
+			Periodo	: evt.srcElement.getAttribute('periodo')	 //-> record.Periodo o rangoSeleccionado.Periodo
 		};
 		console.log("tap periodo", estadoAtencion); 
 		this.fire('mostrar-detalle', estadoAtencion );
 	},
 	
 	_mostrarDetalleTotal:function(evt, obj){
+		
+		if( this._noMostrarDetalle(evt)) return;
+
 		var estadoAtencion = {
 			FechaRadicacionDesde : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionDesde),
 			FechaRadicacionHasta : window.aicl.formatDate(this.rangoSeleccionado.FechaRadicacionHasta),
@@ -451,7 +466,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		console.log("tap total", estadoAtencion); 
 		this.fire('mostrar-detalle', estadoAtencion );
 	},
-
 
 	_esGrupoUno: function(item) {
 		return item.Grupo == 1;
