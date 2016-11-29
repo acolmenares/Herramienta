@@ -1,3 +1,19 @@
+
+public abstract class IndicadorNecesidadBasicaGestor<TIndicador, TNecesidad>
+		: IIndicadorNecesidadBasicaGestor<TIndicador>
+
+INecesidadBasicaGestorConsultas<TNecesidad> gestorNecesidadesBasicas;
+
+List<TIndicador> ConsultarDatosObjetivo_Y_AplicarFitros(ITengoFechaRadicacionDesdeHasta rangoFechas)
+		{
+			var datosObjectivo = gestorNecesidadesBasicas.Consultar(rangoFechas).Results;
+			return filtro.AplicarFiltros(datosObjectivo);
+		}
+
+
+http://localhost:8090/hr/hr-api/estadoatencion/consultar.json?FechaRadicacionDesde=2015-10-01&FechaRadicacionHasta=2016-09-30&Municipio=Popay%C3%A1n&Indicador=Radicados
+
+
 http://epplus.codeplex.com/
 
 http://www.mikesknowledgebase.com/pages/CSharp/ExportToExcel.htm

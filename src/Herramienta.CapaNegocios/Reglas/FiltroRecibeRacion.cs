@@ -253,35 +253,69 @@ namespace Herramienta.CapaNegocios.Reglas
 
 		List<EstadoAtencion> ConsultarPendienteProgramadoQueNoAsistio(List<EstadoAtencion> lista, RecibeRacion grupo)
 		{
-			return
-				ConsultarRadicados(lista, grupo)
-					.Where(x => NoAtendidoQuePermaneceElegible(x)
-						   && x.Contactado == SI
-						   && x.Programado == SI
-						   && EsProgramadoQueNoAsistio(x)
-                           && !x.AnioMesProgramado.EstaVacia()
-					       && x.AnioMesProgramado == (grupo.AnioMes?? x.AnioMesProgramado)
-						  )
-					.ToList();
+            var radicadosNoAtendidosQuePermanecenElegibles = ConsultarRadicados(lista, grupo)
+                    .Where(x => NoAtendidoQuePermaneceElegible(x)).ToList();
+
+            var res = AgruparPorAnioMesRadicacion(radicadosNoAtendidosQuePermanecenElegibles, grupo, (l, g) =>
+            {
+                return l.Where(x =>
+                x.Contactado == SI
+                && x.Programado == SI
+                && EsProgramadoQueNoAsistio(x)
+                && x.AnioMesProgramado.AnioMesEnPeriodo() == g.Periodo
+                && x.AnioMesProgramado == g.AnioMes
+                ).ToList();
+            });
+            return res;
+            
 		}
 
 
-		List<EstadoAtencion> ConsultarPendienteProgramadoProximoMes(List<EstadoAtencion> lista, RecibeRacion grupo)
-		{
-			return
-				ConsultarRadicados(lista, grupo)
-					.Where(x => NoAtendidoQuePermaneceElegible(x)
-						   && x.Contactado == SI
-						   && x.Programado == SI
-					       //&& !EsProgramadoQueNoAsistio(x)
-                           && !x.AnioMesProgramado.EstaVacia()
-						   && x.AnioMesProgramado != grupo.AnioMes
-						  )
-					.ToList();
-		}
+        List<EstadoAtencion> ConsultarPendienteProgramadoProximoMes(List<EstadoAtencion> lista, RecibeRacion grupo)
+        {
+            var radicadosNoAtendidosQuePermanecenElegibles = ConsultarRadicados(lista, grupo)
+                    .Where(x => NoAtendidoQuePermaneceElegible(x)).ToList();
+
+            var res = AgruparPorAnioMesRadicacion(radicadosNoAtendidosQuePermanecenElegibles, grupo, (l, g) =>
+            {
+                return l.Where(x =>
+                x.Contactado == SI
+                && x.Programado == SI
+                //&& EsProgramadoQueNoAsistio(x)
+                //&& x.AnioMesProgramado.AnioMesEnPeriodo() == g.Periodo
+                && x.AnioMesProgramado != g.AnioMes
+                ).ToList();
+            });
+            return res;
+
+        }
 
 
-		List<EstadoAtencion> ConsultarPendienteNoContactado(List<EstadoAtencion> lista, RecibeRacion grupo)
+        private List<EstadoAtencion> AgruparPorAnioMesRadicacion(List<EstadoAtencion> lista, RecibeRacion grupo, Func<List<EstadoAtencion>, RecibeRacion, List<EstadoAtencion>> func)
+        {
+            var res = new List<EstadoAtencion>();
+
+            var grupos = lista.Where( q=> q.AnioMesRadicacion == (grupo.AnioMes ?? q.AnioMesRadicacion) && q.PeriodoRadicacion == (grupo.Periodo ?? q.PeriodoRadicacion))
+                .GroupBy(x => x.AnioMesRadicacion).ToList();
+
+            foreach (var g in grupos)
+            {
+                var grupoDelAnioMes = new RecibeRacion
+                {
+                    Regional = grupo.Regional,
+                    Municipio = grupo.Municipio,
+                    AnioMes = g.Key,
+                    Periodo = g.Key.AnioMesEnPeriodo(),
+
+                };
+                res.AddRange(func(g.ToList(), grupoDelAnioMes));
+            }
+
+            return res;
+        }
+
+
+        List<EstadoAtencion> ConsultarPendienteNoContactado(List<EstadoAtencion> lista, RecibeRacion grupo)
 		{
 			return
 				ConsultarRadicados(lista,grupo)
