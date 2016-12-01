@@ -1,0 +1,114 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<dom-module id="dialogo-fechas_municipio">
+  <template>
+    <style>
+
+      :host {
+        display: block;
+      }
+
+    </style>
+
+    <paper-dialog id="actions" on-iron-overlay-closed="_manejarDialogoCerrado" >
+      <vaadin-date-picker label="Radicados desde" id="desde" ></vaadin-date-picker>
+      <vaadin-date-picker label="Radicados hasta" id="hasta" ></vaadin-date-picker>
+      <paper-dropdown-menu label="Municipio de Atención" id="municipio">
+          <paper-listbox  class="dropdown-content" id="plRangos">
+            <template is="dom-repeat" items="[[municipios]]">
+              <paper-item>[[item]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancelar</paper-button>
+        <paper-button dialog-confirm autofocus>Aceptar</paper-button>
+      </div>
+    </paper-dialog>
+               
+  </template>
+  <script>
+    Polymer({
+
+      is: 'dialogo-fechas_municipio',
+
+      ready:function(){
+        this._configurarCalendario(this.$.desde);
+        this._configurarCalendario(this.$.hasta);
+      },
+          
+      properties: {
+
+        municipios:{
+          type: Array,
+          value :["Florencia", "Popayán"]
+        },
+
+        rango:{
+          type :Object,
+          value: null,
+          notify: true
+        }
+      },
+
+      open:function(){
+        this.$.actions.open();
+      },
+
+      _manejarDialogoCerrado: function(evt, obj){
+        console.log("dialogo cerrado ", evt.detail)
+        if(evt.detail.confirmed){
+          console.log(this.$.desde.value);
+          console.log(this.$.hasta.value);
+          console.log(this.$.municipio.value);
+          var esOK = this._valoresSonCorrectos();
+          if(esOK){
+            console.log("valores son correctos");
+            this.rango={ 
+              FechaRadicacionDesde:this.$.desde.value,
+              FechaRadicacionHasta:this.$.hasta.value,
+              Municipio:this.$.municipio.value,
+             }
+          }
+        }
+      },
+
+      _valoresSonCorrectos:function(){
+         
+        var estamal = (Object.isEmptyOrNull(this.$.desde.value) 
+        || Object.isEmptyOrNull(this.$.hasta.value) 
+        || Object.isEmptyOrNull(this.$.municipio.value) );
+        console.log("esta mal", estamal);
+        return !estamal;
+         
+      },
+
+      _configurarCalendario:function(calendario){
+        calendario.i18n = {
+          week: 'semana',
+          calendar: 'calendario',
+          clear: 'limpiar',
+          today: 'hoy',
+          cancel: 'cancelar',
+          firstDayOfWeek: 1,
+          monthNames: ['enero','febrero','marzo','abril','mayo','junio',
+          'julio','agosto','septiembre','octubre','noviembre','diciembre'],
+          weekdays: 'domingo_lunes_martes_miercoles_jueves_viernes_sabado'.split('_'),
+          weekdaysShort: ['do','lu','ma','mi','ju','vi','sa'],
+          formatDate: function(d) {
+            return d.toDateInputValue(); //[d.getDate(), d.getMonth() + 1, d.getFullYear()].join('.');
+          },
+          parseDate: function(text) {
+            return window.aicl.parseDate(text);
+          },
+          formatTitle: function(monthName, fullYear) {
+            return monthName + ' ' + fullYear;
+          }
+        }
+      }
+
+    });
+
+  </script>
+
+</dom-module>

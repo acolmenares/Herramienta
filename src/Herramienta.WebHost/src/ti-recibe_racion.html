@@ -32,7 +32,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <script src="../bower_components/lodash/lodash.min.js"></script>
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 
 <dom-module id="ti-recibe_racion">
 <template>
@@ -119,14 +118,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 		min-width: 190px;
 	}
 
-  rangos-listbox{
-    padding: 0px 10px;
-  }
+	.icon-settings{
+		margin:20px 0px 0px 0px;
+	}
+
+	rangos-listbox{
+		padding: 0px 10px;
+	}
 
 </style>
 
 <ti-recibe_racion-consulta on-request-completed="_handleObjetivoConsultado" id="ajax"></ti-recibe_racion-consulta>
-<rangos-listbox class="flex-auto" rangos="[[rangos]]"  on-rango-seleccionado="_procesarRangoSeleccionado"></rangos-listbox>
+<dialogo-fechas_municipio id="dialogo" rango="{{rangoSeleccionado}}"></dialogo-fechas_municipio>
+<div class="layout horizontal">
+	<paper-icon-button on-tap="_mostrarDialogo" icon="settings" class="icon-settings" ></paper-icon-button> 
+	<rangos-listbox  rangos="[[rangos]]"  on-rango-seleccionado="_procesarRangoSeleccionado"></rangos-listbox>   
+</div>	
+
 <div class="row" style="padding:0px 4px;">
 	<div class="container">
 		<div class="row">
@@ -411,6 +419,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 			else if(mes=="Diciembre") res = "201512"
 		  return res;
     },
+	
     _procesarRangoSeleccionado:function(data){
       this.rangoSeleccionado= data.detail;
     },
@@ -491,6 +500,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 	},
 	_esIndicador: function(item) {
 		return item.Indicador == true;
+	},
+
+	_mostrarDialogo:function(){
+		this.$.dialogo.open();
 	}
 
     });

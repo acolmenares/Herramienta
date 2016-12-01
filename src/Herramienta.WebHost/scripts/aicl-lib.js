@@ -106,6 +106,10 @@
 
 	window.aicl={};
 
+	/**
+	* @return {Date}
+	* @param {String "/Date(1480514533028)/"}
+	*/
 	window.aicl.convertToJsDate= function (v){
 		if (!v) {
 			return null;
@@ -117,11 +121,15 @@
 		  return new Date(parseFloat(/Date\(([^)]+)\)/.exec(v)[1])); // thanks demis bellot!
 	  }
 		catch(err){
-			return null;
+			return window.aicl.parseDate(v);
 		}
 
 	};
 
+	/**
+	* @return {String yyyy-mm-dd }
+	* @param {String "/Date(1480514533028)/"}
+	*/
 	window.aicl.formatDate= function(value) {
 		if(!value) {
 			return '';
@@ -129,6 +137,21 @@
 		var v = window.aicl.convertToJsDate(value);
 		return v? v.toDateInputValue():'';
 	};
+
+	/**
+	* @return {Date}
+	* @param {String yyyy-mm-dd}
+	*/
+	window.aicl.parseDate= function(text) {
+        var parts = text.split('-');
+		if (parts.length === 3) {
+			var date = new Date(0, 0);
+			date.setFullYear(parseInt(parts[0]));
+			date.setMonth(parseInt(parts[1]) - 1);
+			date.setDate(parseInt(parts[2]));
+			return date;
+		}
+	}
 
 
 	/**
