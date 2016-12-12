@@ -332,7 +332,8 @@ namespace Herramienta.CapaNegocios.Reglas
                 return l.Where(q =>
                 Atendido(q)
                 && q.AsistioSegundaEntrega == SI
-                && q.AnioMesSegundaEntrega==g.AnioMes)
+                //  && q.AnioMesSegundaEntrega==g.AnioMes
+                )
                 .ToList();
             });
 

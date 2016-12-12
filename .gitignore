@@ -306,3 +306,4 @@ $RECYCLE.BIN/
 build/
 App_Data/
 hr-api/
+/src/Herramienta.WebHost/nbproject/private/
