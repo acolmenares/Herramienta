@@ -323,16 +323,23 @@ namespace Herramienta.CapaNegocios.Reglas
 
             return res;
         }
-
+        /// <summary>
+        /// Atendidios en Segunda entrega durante el mes analizado
+        /// </summary>
+        /// <param name="lista"></param>
+        /// <param name="grupo"></param>
+        /// <returns></returns>
         List<EstadoAtencion> ConsultarAtendidosEnSegundaEntrega(List<EstadoAtencion> lista,
                                                                 RecibeRacion grupo)
         {
             var res = AgruparProcesarPorAnioMesRadicacion(lista, grupo, (l, g) =>
             {
-                return l.Where(q =>
+                return lista.Where(q =>
                 Atendido(q)
+                && q.Regional == (grupo.Regional ?? q.Regional)
+                && q.MunicipioAtencion == (grupo.Municipio ?? q.MunicipioAtencion)
+                && q.AnioMesSegundaEntrega == g.AnioMes                       // mes de atencion de la segunda entrea == mes analizado     
                 && q.AsistioSegundaEntrega == SI
-                //  && q.AnioMesSegundaEntrega==g.AnioMes
                 )
                 .ToList();
             });
